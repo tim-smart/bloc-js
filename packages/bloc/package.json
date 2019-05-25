@@ -17,6 +17,7 @@
     "access": "public"
   },
   "scripts": {
+    "clean": "rm -rf lib",
     "tsc": "tsc",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
