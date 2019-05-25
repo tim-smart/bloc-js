@@ -6,8 +6,7 @@
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "esnext",
-    "jsx": "preserve",
+    "target": "es5",
     "sourceMap": true,
     "lib": ["esnext"]
   },

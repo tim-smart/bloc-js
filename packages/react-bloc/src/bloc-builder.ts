@@ -17,16 +17,16 @@ export class BlocBuilder<S> extends Component<
 > {
   constructor(props: IBlocBuilderProps<S>) {
     super(props);
+    this.state = { data: this.props.bloc.currentState };
     this.subscription = Subscription.EMPTY;
   }
 
   private subscription: Subscription;
 
-  public componentDidMount() {
+  componentDidMount() {
     this.subscription = this.props.bloc.state$.subscribe(data => {
       this.setState({ data });
     });
-    this.setState({ data: this.props.bloc.currentState });
   }
 
   public componentWillUnmount() {
