@@ -4,7 +4,7 @@ An implementation of the BLoC pattern in Typescript heavily inspired by
 https://github.com/felangel/bloc
 
 BLoC is an abbreviation for **B**usiness **Lo**gic **C**omponent and was
-concieved by some of the guys on Flutter framework. See this article:
+concieved by some of the guys from the Flutter framework. See this article:
 https://medium.com/flutterpub/architecting-your-flutter-project-bd04e144a8f1
 
 It is essentially a framework agnostic state management tool that is
