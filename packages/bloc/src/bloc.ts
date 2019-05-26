@@ -1,6 +1,6 @@
 import { Subject, BehaviorSubject, Subscription } from "rxjs";
 import { concatMap } from "rxjs/operators";
-import isEqual = require("fast-deep-equal");
+import { deepEqual } from "fast-equals";
 import { Transition } from "./transition";
 import { BlocDelegate } from "./delegate";
 
@@ -47,7 +47,7 @@ export abstract class Bloc<E, S> {
 
       for await (const nextState of this.mapEventToState(event)) {
         const currentState = this.currentState;
-        if (isEqual(currentState, nextState) || this.state$.closed) {
+        if (deepEqual(currentState, nextState) || this.state$.closed) {
           continue;
         }
 

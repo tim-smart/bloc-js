@@ -22,7 +22,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "fast-deep-equal": "^2.0.1",
+    "fast-equals": "^2.0.0",
     "rxjs": "^6.5.2"
   }
 }
