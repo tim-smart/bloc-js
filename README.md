@@ -60,3 +60,9 @@ export default class Counter extends Vue {
 }
 </script>
 ```
+
+## TODO
+
+Pull requests welcome :)
+
+[] State hydration for Server Side rendering
