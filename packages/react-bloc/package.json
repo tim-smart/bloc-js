@@ -35,8 +35,5 @@
   },
   "devDependencies": {
     "@types/react": "^16.8.18"
-  },
-  "dependencies": {
-    "rxjs": "^6.5.2"
   }
 }

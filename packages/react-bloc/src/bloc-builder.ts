@@ -1,6 +1,5 @@
-import { Component, ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Bloc } from "@bloc-js/bloc";
-import { Subscription } from "rxjs";
 
 export interface IBlocBuilderProps<S> {
   bloc: Bloc<any, S>;
@@ -11,29 +10,15 @@ export interface IBlocBuilderState<S> {
   data: S;
 }
 
-export class BlocBuilder<S> extends Component<
-  IBlocBuilderProps<S>,
-  IBlocBuilderState<S>
-> {
-  constructor(props: IBlocBuilderProps<S>) {
-    super(props);
-    this.state = { data: this.props.bloc.currentState };
-    this.subscription = Subscription.EMPTY;
-  }
+export function BlocBuilder<S>(props: IBlocBuilderProps<S>) {
+  const [state, setState] = useState<S>(props.bloc.currentState);
 
-  private subscription: Subscription;
-
-  componentDidMount() {
-    this.subscription = this.props.bloc.state$.subscribe(data => {
-      this.setState({ data });
+  useEffect(() => {
+    const subscription = props.bloc.state$.subscribe(data => {
+      setState(data);
     });
-  }
+    return () => subscription.unsubscribe();
+  });
 
-  public componentWillUnmount() {
-    this.subscription.unsubscribe();
-  }
-
-  public render() {
-    return this.props.builder(this.state.data);
-  }
+  return props.builder(state);
 }
