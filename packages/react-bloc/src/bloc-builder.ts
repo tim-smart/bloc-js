@@ -6,10 +6,6 @@ export interface IBlocBuilderProps<S> {
   builder: (state: S) => ReactNode;
 }
 
-export interface IBlocBuilderState<S> {
-  data: S;
-}
-
 export function BlocBuilder<S>(props: IBlocBuilderProps<S>) {
   const [state, setState] = useState<S>(props.bloc.currentState);
 
