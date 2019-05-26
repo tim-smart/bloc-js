@@ -6,12 +6,11 @@ import { BlocDelegate } from "./delegate";
 
 export abstract class Bloc<E, S> {
   constructor() {
-    this.eventsSubscription = this.bindStateSubject();
+    this.bindStateSubject();
   }
 
   public events$ = new Subject<E>();
   public state$ = new BehaviorSubject<S>(this.initialState());
-  private eventsSubscription: Subscription;
 
   abstract initialState(): S;
   abstract mapEventToState(event: E): AsyncIterableIterator<S>;
@@ -25,7 +24,6 @@ export abstract class Bloc<E, S> {
   }
 
   public dispose() {
-    this.eventsSubscription.unsubscribe();
     this.events$.complete();
     this.state$.complete();
   }
@@ -35,9 +33,7 @@ export abstract class Bloc<E, S> {
   public onError(error: any) {}
 
   private bindStateSubject() {
-    return this.events$
-      .pipe(concatMap(event => this.handleEvent(event)))
-      .subscribe();
+    this.events$.pipe(concatMap(event => this.handleEvent(event))).subscribe();
   }
 
   private async handleEvent(event: E) {
