@@ -34,6 +34,7 @@
     "react": "^16.8"
   },
   "devDependencies": {
+    "@bloc-js/bloc": "file:../bloc",
     "@types/react": "^16.8.18"
   }
 }
