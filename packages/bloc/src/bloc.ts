@@ -12,7 +12,7 @@ export abstract class Bloc<E, S> {
   private _events$ = new Subject<E>();
   private _state$ = new BehaviorSubject<S>(this.initialState());
 
-  public get events$(): Observer<E> {
+  public get events$(): Observable<E> {
     return this._events$;
   }
   public get state$(): Observable<S> {
