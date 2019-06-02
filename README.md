@@ -16,6 +16,10 @@ Events -> Logic -> State
 
 A stream of events are transformed into a stream of states.
 
+## Basic Todo's example using React
+
+https://github.com/tim-smart/bloc-js-todos-example
+
 ## React example
 
 [See here.](packages/react-bloc/example)
