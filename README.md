@@ -41,8 +41,9 @@ import { Bloc } from "@bloc-js/bloc";
 type TCounterEvent = "increment" | "decrement";
 
 class CounterBloc extends Bloc<TCounterEvent, number> {
-  public initialState() {
-    return 0;
+  constructor() {
+    // Pass initial state
+    super(0);
   }
 
   public async *mapEventToState(event: TCounterEvent) {

@@ -5,7 +5,8 @@ import { Transition } from "./transition";
 import { BlocDelegate } from "./delegate";
 
 export abstract class Bloc<E, S> {
-  constructor() {
+  constructor(initialState: S) {
+    this._state$ = new BehaviorSubject(initialState);
     this.bindStateSubject();
   }
 
@@ -14,7 +15,7 @@ export abstract class Bloc<E, S> {
   }
 
   private _events$ = new Subject<E>();
-  private _state$ = new BehaviorSubject<S>(this.initialState());
+  private _state$: BehaviorSubject<S>;
 
   public get events$(): Observable<E> {
     return this._events$;
@@ -23,7 +24,6 @@ export abstract class Bloc<E, S> {
     return this._state$;
   }
 
-  abstract initialState(): S;
   abstract mapEventToState(event: E): AsyncIterableIterator<S>;
 
   public get currentState() {

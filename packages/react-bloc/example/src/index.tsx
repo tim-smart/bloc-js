@@ -6,8 +6,8 @@ import * as ReactDOM from "react-dom";
 type TCounterEvent = "increment" | "decrement";
 
 class CounterBloc extends Bloc<TCounterEvent, number> {
-  public initialState() {
-    return 0;
+  constructor() {
+    super(0);
   }
 
   public async *mapEventToState(event: TCounterEvent) {
