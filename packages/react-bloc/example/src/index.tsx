@@ -1,5 +1,5 @@
 import { Bloc } from "@bloc-js/bloc";
-import { BlocBuilder } from "@bloc-js/react-bloc";
+import { BlocBuilder, useBlocState } from "@bloc-js/react-bloc";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
@@ -21,12 +21,18 @@ class CounterBloc extends Bloc<TCounterEvent, number> {
 
 const counterBloc = new CounterBloc();
 
+function MultiplicationComponent() {
+  const count = useBlocState(counterBloc);
+  return <p>Multiplied: {count * 3}</p>;
+}
+
 ReactDOM.render(
   <div>
     <BlocBuilder
       bloc={counterBloc}
       builder={state => <p>Counter: {state}</p>}
     />
+    <MultiplicationComponent />
     <button onClick={() => counterBloc.dispatch("increment")}>Increment</button>
     <br />
     <button onClick={() => counterBloc.dispatch("decrement")}>Decrement</button>
