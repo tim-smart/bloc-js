@@ -6,5 +6,5 @@ export class BlocDelegate {
   public onTransition(bloc: Bloc<any, any>, transition: Transition<any, any>) {}
   public onError(bloc: Bloc<any, any>, error: any) {}
 
-  public static current: BlocDelegate = new BlocDelegate();
+  public static default: BlocDelegate = new BlocDelegate();
 }

@@ -1,9 +1,9 @@
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Bloc } from "@bloc-js/bloc";
 
 export interface IBlocBuilderProps<S> {
   bloc: Bloc<any, S>;
-  builder: (state: S) => ReactNode;
+  builder: (state: S) => JSX.Element;
 }
 
 export function BlocBuilder<S>(props: IBlocBuilderProps<S>) {

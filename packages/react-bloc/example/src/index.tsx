@@ -1,7 +1,7 @@
 import { Bloc } from "@bloc-js/bloc";
 import { BlocBuilder } from "@bloc-js/react-bloc";
 import * as React from "react";
-import ReactDOM from "react-dom";
+import * as ReactDOM from "react-dom";
 
 type TCounterEvent = "increment" | "decrement";
 
