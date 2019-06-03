@@ -1,8 +1,13 @@
 import { Subject, BehaviorSubject, Observable, Subscriber } from "rxjs";
-import { concatMap } from "rxjs/operators";
+import { concatMap, map } from "rxjs/operators";
 import { deepEqual } from "fast-equals";
 import { Transition } from "./transition";
 import { BlocDelegate } from "./delegate";
+
+interface BlocEvent<E> {
+  payload: E;
+  resolve: () => void;
+}
 
 export abstract class Bloc<E, S> {
   constructor(initialState: S) {
@@ -14,14 +19,14 @@ export abstract class Bloc<E, S> {
     return BlocDelegate.default;
   }
 
-  protected _events$ = new Subject<E>();
+  protected _events$ = new Subject<BlocEvent<E>>();
   protected _state$: BehaviorSubject<S>;
 
   public get events$(): Observable<E> {
-    return this._events$;
+    return this._events$.pipe(map(e => e.payload));
   }
   public get state$(): Observable<S> {
-    return this._state$;
+    return this._state$.asObservable();
   }
 
   abstract mapEventToState(event: E): AsyncIterableIterator<S>;
@@ -30,10 +35,13 @@ export abstract class Bloc<E, S> {
     return this._state$.value;
   }
 
-  public dispatch(event: E) {
-    this.delegate.onEvent(this, event);
-    this.onEvent(event);
-    this._events$.next(event);
+  public dispatch(payload: E) {
+    this.delegate.onEvent(this, payload);
+    this.onEvent(payload);
+
+    return new Promise<void>(resolve => {
+      this._events$.next({ payload, resolve });
+    });
   }
 
   public dispose() {
@@ -46,18 +54,18 @@ export abstract class Bloc<E, S> {
   public onError(error: any) {}
 
   public transform(
-    events$: Observable<E>,
-    next: (event: E) => Observable<S>
+    events$: Observable<BlocEvent<E>>,
+    next: (event: BlocEvent<E>) => Observable<S>
   ): Observable<S> {
     return events$.pipe(concatMap(next));
   }
 
   private bindStateSubject() {
-    let currentEvent: E;
+    let currentEvent: BlocEvent<E>;
 
     this.transform(this._events$, event => {
       currentEvent = event;
-      return this.observableFrom(this.mapEventToState(currentEvent));
+      return this.handleEvent(currentEvent);
     }).forEach(nextState => {
       const currentState = this.currentState;
       if (deepEqual(currentState, nextState) || this._state$.closed) {
@@ -66,9 +74,10 @@ export abstract class Bloc<E, S> {
 
       const transition = new Transition({
         currentState,
-        event: currentEvent,
+        event: currentEvent.payload,
         nextState
       });
+
       this.delegate.onTransition(this, transition);
       this.onTransition(transition);
 
@@ -76,14 +85,18 @@ export abstract class Bloc<E, S> {
     });
   }
 
-  private observableFrom<T>(iterator: AsyncIterable<T>): Observable<T> {
+  private handleEvent(event: BlocEvent<E>): Observable<S> {
+    const iterator = this.mapEventToState(event.payload);
     return new Observable(observer => {
       asyncIterableForEach(iterator, observer)
         .catch(error => {
           this.delegate.onError(this, error);
           this.onError(error);
         })
-        .finally(() => observer.complete());
+        .finally(() => {
+          observer.complete();
+          event.resolve();
+        });
     });
   }
 }
