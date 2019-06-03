@@ -14,8 +14,8 @@ export abstract class Bloc<E, S> {
     return BlocDelegate.default;
   }
 
-  private _events$ = new Subject<E>();
-  private _state$: BehaviorSubject<S>;
+  protected _events$ = new Subject<E>();
+  protected _state$: BehaviorSubject<S>;
 
   public get events$(): Observable<E> {
     return this._events$;
