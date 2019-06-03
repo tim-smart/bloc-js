@@ -72,11 +72,11 @@ export abstract class Bloc<E, S> {
         return;
       }
 
-      const transition = new Transition({
+      const transition: Transition<E, S> = {
         currentState,
         event: currentEvent.payload,
         nextState
-      });
+      };
 
       this.delegate.onTransition(this, transition);
       this.onTransition(transition);
