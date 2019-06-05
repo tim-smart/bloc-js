@@ -6,31 +6,27 @@ const isServer = typeof window === "undefined";
 
 type ExtractBlocState<B> = B extends Bloc<any, infer S> ? S : never;
 
-export interface BlocMap {
-  [key: string]: Bloc<any, any>;
-}
+export type BlocStateMap<M> = { [K in keyof M]: ExtractBlocState<M[K]> };
 
-export type BlocStateMap<M extends BlocMap> = {
-  [K in keyof M]: ExtractBlocState<M[K]>
-};
+export type CreateBlocsFn<B> = (data: BlocStateMap<B>) => B;
 
-export type CreateBlocsFn<B extends BlocMap> = (data: BlocStateMap<B>) => B;
-
-function getStateFromBlocs<B extends BlocMap>(map: B): BlocStateMap<B> {
+function getStateFromBlocs<M extends { [key: string]: any }>(
+  map: M
+): BlocStateMap<M> {
   const state: { [key: string]: any } = {};
 
   Object.keys(map).forEach(key => {
     state[key] = map[key].currentState;
   });
 
-  return state as BlocStateMap<B>;
+  return state as BlocStateMap<M>;
 }
 
-export function withBlocs<B extends BlocMap>(
-  createBlocs: CreateBlocsFn<B>,
+export function withBlocs<M>(
+  createBlocs: CreateBlocsFn<M>,
   App: typeof NextApp
 ) {
-  let blocs: B;
+  let blocs: M;
 
   function initializeBlocs(data: any) {
     if (isServer) {
@@ -67,7 +63,7 @@ export function withBlocs<B extends BlocMap>(
       this.blocs = initializeBlocs(props.initialBlocState);
     }
 
-    public blocs: B;
+    public blocs: M;
 
     render() {
       return <App {...this.props} blocs={this.blocs} />;
