@@ -4,22 +4,26 @@ import NextApp, { NextAppContext, AppProps, DefaultAppIProps } from "next/app";
 
 const isServer = typeof window === "undefined";
 
+type ExtractBlocState<B> = B extends Bloc<any, infer S> ? S : never;
+
 export interface BlocMap {
   [key: string]: Bloc<any, any>;
 }
 
-export type CreateBlocsFn<B extends BlocMap> = (
-  data: { [K in keyof B]?: any }
-) => B;
+export type BlocStateMap<M extends BlocMap> = {
+  [K in keyof M]: ExtractBlocState<M[K]>
+};
 
-function getStateFromBlocs<B extends BlocMap>(map: B) {
+export type CreateBlocsFn<B extends BlocMap> = (data: BlocStateMap<B>) => B;
+
+function getStateFromBlocs<B extends BlocMap>(map: B): BlocStateMap<B> {
   const state: { [key: string]: any } = {};
 
   Object.keys(map).forEach(key => {
     state[key] = map[key].currentState;
   });
 
-  return state;
+  return state as BlocStateMap<B>;
 }
 
 export function withBlocs<B extends BlocMap>(
