@@ -5,6 +5,7 @@
   "author": "Tim Smart <tim@fostle.com>",
   "license": "ISC",
   "main": "lib/bloc.js",
+  "module": "lib-es/bloc.js",
   "typings": "lib/bloc.d.ts",
   "directories": {
     "lib": "lib",
@@ -18,7 +19,9 @@
   },
   "scripts": {
     "clean": "rm -rf lib",
-    "tsc": "tsc",
+    "tsc:es": "tsc -m esnext -t esnext --outDir lib-es/",
+    "tsc:cjs": "tsc --outDir lib/",
+    "tsc": "npm run tsc:es && npm run tsc:cjs",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
