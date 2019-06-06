@@ -3,5 +3,6 @@ lerna-debug.log
 npm-debug.log
 packages/*/lib
 packages/*/lib-es
+packages/*/lib-esnext
 .history
 .cache
