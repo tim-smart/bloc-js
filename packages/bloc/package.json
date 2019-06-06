@@ -6,6 +6,7 @@
   "license": "ISC",
   "main": "lib/bloc.js",
   "module": "lib-es/bloc.js",
+  "esnext": "lib-esnext/bloc.js",
   "typings": "lib/bloc.d.ts",
   "directories": {
     "lib": "lib",

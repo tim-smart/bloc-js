@@ -11,6 +11,7 @@
   "license": "ISC",
   "main": "lib/react-bloc.js",
   "module": "lib-es/react-bloc.js",
+  "esnext": "lib-esnext/react-bloc.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
