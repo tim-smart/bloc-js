@@ -17,7 +17,8 @@
   },
   "files": [
     "lib",
-    "lib-es"
+    "lib-es",
+    "lib-esnext"
   ],
   "repository": {
     "type": "git",
@@ -25,9 +26,10 @@
   },
   "scripts": {
     "clean": "rm -rf lib",
-    "tsc:es": "tsc -m esnext -t esnext --outDir lib-es/",
+    "tsc:es": "tsc -m es6 --outDir lib-es/",
+    "tsc:esnext": "tsc -m esnext -t esnext --outDir lib-esnext/",
     "tsc:cjs": "tsc --outDir lib/",
-    "tsc": "npm run tsc:es && npm run tsc:cjs",
+    "tsc": "npm run tsc:es && npm run tsc:esnext && npm run tsc:cjs",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "bugs": {
