@@ -66,8 +66,6 @@ export default class Counter extends Vue {
 </script>
 ```
 
-## TODO
+## Next.js example (with SSR state hydration)
 
-Pull requests welcome :)
-
-[] State hydration for Server Side rendering
+https://github.com/tim-smart/nextjs-bloc-js-example
