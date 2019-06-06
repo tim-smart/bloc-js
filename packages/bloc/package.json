@@ -1,6 +1,6 @@
 {
   "name": "@bloc-js/bloc",
-  "version": "1.5.8",
+  "version": "1.5.9",
   "description": "A BLoC implentation in Typescript",
   "author": "Tim Smart <tim@fostle.com>",
   "license": "ISC",
