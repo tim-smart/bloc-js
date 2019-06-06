@@ -1,3 +1,3 @@
 # `bloc`
 
-See [the parent project](../../).
+See [the parent project](../../)
