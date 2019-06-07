@@ -1,6 +1,7 @@
-import * as React from "react";
 import { Bloc } from "@bloc-js/bloc";
-import NextApp, { NextAppContext, AppProps, DefaultAppIProps } from "next/app";
+import { NextComponentType, NextContext, NextFC } from "next";
+import { AppComponentType, NextAppContext } from "next/app";
+import * as React from "react";
 
 const isServer = typeof window === "undefined";
 
@@ -8,7 +9,7 @@ type ExtractBlocState<B> = B extends Bloc<any, infer S> ? S : never;
 
 export type BlocStateMap<M> = { [K in keyof M]: ExtractBlocState<M[K]> };
 
-export type CreateBlocsFn<B> = (data: BlocStateMap<B>) => B;
+export type CreateBlocsFn<B, C> = (data: BlocStateMap<B>, ctx: C) => B;
 
 function getStateFromBlocs<M extends { [key: string]: any }>(
   map: M
@@ -22,51 +23,58 @@ function getStateFromBlocs<M extends { [key: string]: any }>(
   return state as BlocStateMap<M>;
 }
 
-export function withBlocs<M>(
-  createBlocs: CreateBlocsFn<M>,
-  App: typeof NextApp
+export function withBlocs<M, C = any>(
+  createBlocs: CreateBlocsFn<M, C>,
+  Component: NextComponentType<any, any, any> | AppComponentType<any>,
+  InheritedCtx?: React.Context<Partial<C>>
 ) {
   let blocs: M;
 
-  function initializeBlocs(data: any) {
+  function initializeBlocs(data: any, ctx: C) {
     if (isServer) {
-      return createBlocs(data);
+      return createBlocs(data, ctx);
     }
-
     if (!blocs) {
-      blocs = createBlocs(data);
+      blocs = createBlocs(data, ctx);
     }
-
     return blocs;
   }
 
-  return class AppWithBlocs extends React.Component<
-    AppProps & DefaultAppIProps
-  > {
-    static async getInitialProps(appContext: NextAppContext) {
-      const blocs = initializeBlocs({});
-      Object.assign(appContext.ctx, blocs);
+  const WithBlocs: NextFC<any> = props => {
+    let blocs: M;
 
-      let appProps = {};
-      if (typeof App.getInitialProps === "function") {
-        appProps = await App.getInitialProps(appContext);
-      }
-
-      return {
-        ...appProps,
-        initialBlocState: getStateFromBlocs(blocs)
-      };
+    if (InheritedCtx) {
+      const inheritedBlocs = React.useContext(InheritedCtx) as C;
+      blocs = initializeBlocs(props.initialBlocState, inheritedBlocs);
+    } else {
+      blocs = initializeBlocs(props.initialBlocState, {} as any);
     }
 
-    constructor(props: any) {
-      super(props);
-      this.blocs = initializeBlocs(props.initialBlocState);
-    }
-
-    public blocs: M;
-
-    render() {
-      return <App {...this.props} blocs={this.blocs} />;
-    }
+    return <Component {...props} blocs={blocs} />;
   };
+
+  WithBlocs.getInitialProps = async (nextCtx: NextContext | NextAppContext) => {
+    const ctx = (nextCtx as NextAppContext).ctx || nextCtx;
+    let blocs: M;
+
+    if (InheritedCtx) {
+      blocs = initializeBlocs({}, ctx as any);
+    } else {
+      blocs = initializeBlocs({}, {} as C);
+    }
+
+    Object.assign(ctx, blocs);
+
+    let pageProps = {};
+    if (typeof Component.getInitialProps === "function") {
+      pageProps = await Component.getInitialProps(nextCtx as any);
+    }
+
+    return {
+      ...pageProps,
+      initialBlocState: getStateFromBlocs(blocs)
+    };
+  };
+
+  return WithBlocs;
 }
