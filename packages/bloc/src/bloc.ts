@@ -1,11 +1,11 @@
-import { Subject, BehaviorSubject, Observable, Subscriber } from "rxjs";
+import { Subject, BehaviorSubject, Observable, Subscriber, empty } from "rxjs";
 import { concatMap, map } from "rxjs/operators";
 import { deepEqual } from "fast-equals";
 import { Transition } from "./transition";
 import { BlocDelegate } from "./delegate";
 
 interface BlocEvent<E> {
-  payload: E;
+  payload: E | "__bloc_wait";
   resolve: () => void;
 }
 
@@ -23,7 +23,7 @@ export abstract class Bloc<E, S> {
   protected _state$: BehaviorSubject<S>;
 
   public get events$(): Observable<E> {
-    return this._events$.pipe(map(e => e.payload));
+    return this._events$.pipe(map(e => e.payload as E));
   }
   public get state$(): Observable<S> {
     return this._state$.asObservable();
@@ -41,6 +41,12 @@ export abstract class Bloc<E, S> {
 
     return new Promise<void>(resolve => {
       this._events$.next({ payload, resolve });
+    });
+  }
+
+  public waitUntilIdle() {
+    return new Promise<void>(resolve => {
+      this._events$.next({ payload: "__bloc_wait", resolve });
     });
   }
 
@@ -64,6 +70,11 @@ export abstract class Bloc<E, S> {
     let currentEvent: BlocEvent<E>;
 
     this.transform(this._events$, event => {
+      if (event.payload === "__bloc_wait") {
+        event.resolve();
+        return empty();
+      }
+
       currentEvent = event;
       return this.handleEvent(currentEvent);
     }).forEach(nextState => {
@@ -74,7 +85,7 @@ export abstract class Bloc<E, S> {
 
       const transition: Transition<E, S> = {
         currentState,
-        event: currentEvent.payload,
+        event: currentEvent.payload as E,
         nextState
       };
 
@@ -86,7 +97,7 @@ export abstract class Bloc<E, S> {
   }
 
   private handleEvent(event: BlocEvent<E>): Observable<S> {
-    const iterator = this.mapEventToState(event.payload);
+    const iterator = this.mapEventToState(event.payload as E);
     return new Observable(observer => {
       asyncIterableForEach(iterator, observer)
         .catch(error => {
