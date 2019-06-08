@@ -9,8 +9,8 @@ export function useBlocState<S>(bloc: Bloc<any, S> | CreateBlocFn<S>) {
   useEffect(() => {
     const actualBloc = typeof bloc === "function" ? bloc() : bloc;
     setState(actualBloc.currentState);
-
     const subscription = actualBloc.state$.subscribe(nextState => {
+      if (state === nextState) return;
       setState(nextState);
     });
     return () => subscription.unsubscribe();
