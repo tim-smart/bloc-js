@@ -1,12 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import { Bloc } from "@bloc-js/bloc";
+import { any } from "prop-types";
 
-export type CreateBlocFn<B> = () => B;
+export type CreateBlocFn<S> = () => Bloc<any, S>;
 
-export function useBlocState<S, B extends Bloc<any, S>>(
-  blocCreator: B | CreateBlocFn<B>
-) {
-  const blocRef = useRef<B>();
+export function useBlocState<S>(blocCreator: Bloc<any, S> | CreateBlocFn<S>) {
+  const blocRef = useRef<Bloc<any, S>>();
   function getBloc() {
     if (blocRef.current) return blocRef.current;
     blocRef.current =
