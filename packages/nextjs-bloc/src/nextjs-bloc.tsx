@@ -1,7 +1,7 @@
 import { Bloc } from "@bloc-js/bloc";
-import { NextComponentType, NextContext, NextFC } from "next";
-import { AppComponentType, NextAppContext } from "next/app";
+import { NextComponentType } from "next";
 import * as React from "react";
+import { NextPageContext, AppContextType } from "next-server/dist/lib/utils";
 
 const isServer = typeof window === "undefined";
 
@@ -25,7 +25,7 @@ function getStateFromBlocs<M extends { [key: string]: any }>(
 
 export function withBlocs<M, C = any>(
   createBlocs: CreateBlocsFn<M, C>,
-  Component: NextComponentType<any, any, any> | AppComponentType<any>,
+  Component: NextComponentType<any, any, any>,
   InheritedCtx?: React.Context<Partial<C>>
 ) {
   let blocs: M;
@@ -40,7 +40,11 @@ export function withBlocs<M, C = any>(
     return blocs;
   }
 
-  const WithBlocs: NextFC<any> = props => {
+  const WithBlocs: NextComponentType<
+    NextPageContext | AppContextType,
+    any,
+    any
+  > = props => {
     let blocs: M;
 
     if (InheritedCtx) {
@@ -53,8 +57,8 @@ export function withBlocs<M, C = any>(
     return <Component {...props} blocs={blocs} />;
   };
 
-  WithBlocs.getInitialProps = async (nextCtx: NextContext | NextAppContext) => {
-    const ctx = (nextCtx as NextAppContext).ctx || nextCtx;
+  WithBlocs.getInitialProps = async nextCtx => {
+    const ctx = (nextCtx as AppContextType).ctx || nextCtx;
     let blocs: M;
 
     if (InheritedCtx) {

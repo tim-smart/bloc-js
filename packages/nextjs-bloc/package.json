@@ -34,14 +34,13 @@
   },
   "peerDependencies": {
     "@bloc-js/bloc": "^1.0",
-    "next": "^8.0",
+    "next": "^9.0",
     "react": "^16.8"
   },
   "devDependencies": {
     "@bloc-js/bloc": "file:../bloc",
-    "@types/next": "^8.0.5",
     "@types/react": "^16.8.18",
-    "next": "^8.1.0",
+    "next": "^9.0.1",
     "react": "^16.8.6"
   }
 }
