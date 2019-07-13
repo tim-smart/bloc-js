@@ -9,7 +9,8 @@
     "lib": ["esnext"],
     "target": "es5",
     "module": "commonjs",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "esModuleInterop": true
   },
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

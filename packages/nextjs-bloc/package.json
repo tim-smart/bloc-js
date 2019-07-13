@@ -40,6 +40,7 @@
   "devDependencies": {
     "@bloc-js/bloc": "file:../bloc",
     "@types/react": "^16.8.18",
+    "@types/react-dom": "^16.8.4",
     "next": "^9.0.1",
     "react": "^16.8.6"
   }
