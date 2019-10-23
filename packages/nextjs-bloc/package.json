@@ -33,15 +33,15 @@
     "url": "https://github.com/tim-smart/bloc-js/issues"
   },
   "peerDependencies": {
-    "@bloc-js/bloc": "^1.0",
-    "next": "^9.0",
-    "react": "^16.8"
+    "@bloc-js/bloc": "*",
+    "next": "*",
+    "react": "*"
   },
   "devDependencies": {
     "@bloc-js/bloc": "file:../bloc",
-    "@types/react": "^16.8.18",
-    "@types/react-dom": "^16.8.4",
-    "next": "^9.0.1",
-    "react": "^16.8.6"
+    "@types/react": "^16.9.9",
+    "@types/react-dom": "^16.9.2",
+    "next": "^9.1.1",
+    "react": "^16.11.0"
   }
 }

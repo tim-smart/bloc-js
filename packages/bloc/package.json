@@ -30,6 +30,6 @@
   },
   "dependencies": {
     "fast-equals": "^2.0.0",
-    "rxjs": "^6.5.2"
+    "rxjs": "^6.5.3"
   }
 }

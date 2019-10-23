@@ -37,8 +37,8 @@
     "url": "https://github.com/tim-smart/bloc-js/issues"
   },
   "peerDependencies": {
-    "@bloc-js/bloc": "^1.0",
-    "react": "^16.8"
+    "@bloc-js/bloc": "*",
+    "react": "*"
   },
   "devDependencies": {
     "@bloc-js/bloc": "file:../bloc",
