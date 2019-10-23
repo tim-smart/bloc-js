@@ -1,7 +1,7 @@
 import { Bloc } from "@bloc-js/bloc";
-import { NextComponentType } from "next";
+import { NextComponentType, NextPageContext } from "next";
 import React from "react";
-import { NextPageContext, AppContextType } from "next-server/dist/lib/utils";
+import { AppContextType } from "next/dist/next-server/lib/utils";
 
 const isServer = typeof window === "undefined";
 
