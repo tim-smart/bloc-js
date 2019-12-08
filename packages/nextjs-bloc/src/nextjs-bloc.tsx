@@ -5,7 +5,7 @@ import { AppContextType } from "next/dist/next-server/lib/utils";
 
 const isServer = typeof window === "undefined";
 
-type ExtractBlocState<B> = B extends Bloc<any, infer S> ? S : never;
+type ExtractBlocState<B> = B extends Bloc<infer S> ? S : never;
 
 export type BlocStateMap<M> = { [K in keyof M]: ExtractBlocState<M[K]> };
 

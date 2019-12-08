@@ -21,7 +21,7 @@
     "access": "public"
   },
   "scripts": {
-    "clean": "rm -rf lib",
+    "clean": "rm -rf lib*",
     "tsc:es": "tsc -m es6 --outDir lib-es/",
     "tsc:esnext": "tsc -m esnext -t esnext --outDir lib-esnext/",
     "tsc:cjs": "tsc --outDir lib/",
