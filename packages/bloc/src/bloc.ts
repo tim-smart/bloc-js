@@ -1,7 +1,3 @@
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 
-export abstract class Bloc<S> extends BehaviorSubject<S> {
-  protected setState(s: S) {
-    return this.next(s);
-  }
-}
+export abstract class Bloc<S> extends BehaviorSubject<S> {}

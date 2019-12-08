@@ -28,8 +28,10 @@
     "tsc": "npm run tsc:es && npm run tsc:esnext && npm run tsc:cjs",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "dependencies": {
-    "fast-equals": "^2.0.0",
+  "devDependencies": {
     "rxjs": "^6.5.3"
+  },
+  "peerDependencies": {
+    "rxjs": ">= 6"
   }
 }
