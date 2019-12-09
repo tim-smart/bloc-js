@@ -2,9 +2,9 @@
   "name": "root",
   "private": true,
   "devDependencies": {
-    "@types/node": "^12.11.6",
-    "lerna": "^3.18.3",
-    "typescript": "^3.6.4"
+    "@types/node": "^12.12.14",
+    "lerna": "^3.19.0",
+    "typescript": "^3.7.3"
   },
   "scripts": {
     "publish": "lerna run clean && lerna run tsc && lerna publish"

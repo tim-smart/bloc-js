@@ -42,8 +42,8 @@
   },
   "devDependencies": {
     "@bloc-js/bloc": "file:../bloc",
-    "@types/react": "^16.8.18",
-    "react": "^16.11.0",
+    "@types/react": "^16.9.15",
+    "react": "^16.12.0",
     "rxjs": "^6.5.3"
   }
 }

@@ -39,11 +39,11 @@
   },
   "devDependencies": {
     "@bloc-js/bloc": "file:../bloc",
-    "@types/react": "^16.9.9",
-    "@types/react-dom": "^16.9.2",
-    "next": "^9.1.1",
-    "react": "^16.11.0",
-    "react-dom": "^16.11.0",
+    "@types/react": "^16.9.15",
+    "@types/react-dom": "^16.9.4",
+    "next": "^9.1.4",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
     "rxjs": "^6.5.3"
   }
 }
