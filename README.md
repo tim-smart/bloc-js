@@ -1,8 +1,5 @@
 # @bloc-js
 
-An implementation of the BLoC pattern in Typescript heavily inspired by
-https://github.com/felangel/bloc
-
 BLoC is an abbreviation for **B**usiness **Lo**gic **C**omponent and was
 concieved by some of the guys from the Flutter framework. See this article:
 https://medium.com/flutterpub/architecting-your-flutter-project-bd04e144a8f1
@@ -29,11 +26,11 @@ https://github.com/tim-smart/bloc-js-todos-example
 ```vue
 <template>
   <div class="counter">
-    <p>Count: {{ counterBloc.currentState }}</p>
+    <p>Count: {{ counterBloc.value }}</p>
     <p>
-      <button @click="counterBloc.dispatch('increment')">Increment</button>
+      <button @click="counterBloc.increment()">Increment</button>
       <br />
-      <button @click="counterBloc.dispatch('decrement')">Decrement</button>
+      <button @click="counterBloc.decrement()">Decrement</button>
     </p>
   </div>
 </template>
@@ -42,20 +39,13 @@ https://github.com/tim-smart/bloc-js-todos-example
 import { Component, Vue } from "vue-property-decorator";
 import { Bloc } from "@bloc-js/bloc";
 
-type TCounterEvent = "increment" | "decrement";
-
-class CounterBloc extends Bloc<TCounterEvent, number> {
-  constructor() {
-    // Pass initial state
-    super(0);
+class CounterBloc extends Bloc<number> {
+  public increment() {
+    this.next(this.value + 1);
   }
 
-  public async *mapEventToState(event: TCounterEvent) {
-    if (event === "increment") {
-      yield this.currentState + 1;
-    } else if (event === "decrement") {
-      yield this.currentState - 1;
-    }
+  public decrement() {
+    this.next(this.value - 1);
   }
 }
 

@@ -37,12 +37,13 @@
     "url": "https://github.com/tim-smart/bloc-js/issues"
   },
   "peerDependencies": {
-    "@bloc-js/bloc": "*",
+    "@bloc-js/bloc": ">= 2",
     "react": "*"
   },
   "devDependencies": {
     "@bloc-js/bloc": "file:../bloc",
     "@types/react": "^16.8.18",
-    "react": "^16.11.0"
+    "react": "^16.11.0",
+    "rxjs": "^6.5.3"
   }
 }

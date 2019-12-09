@@ -2,24 +2,35 @@ import { Bloc } from "@bloc-js/bloc";
 import { BlocBuilder, useBlocState } from "@bloc-js/react-bloc";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import { Subject, timer } from "rxjs";
+import { debounce, map } from "rxjs/operators";
 
-type TCounterEvent = "increment" | "decrement";
+class CounterBloc extends Bloc<number> {
+  constructor(value: number) {
+    super(value);
 
-class CounterBloc extends Bloc<TCounterEvent, number> {
-  constructor() {
-    super(0);
+    this.consume(
+      this._subject.pipe(
+        debounce(() => timer(1000)),
+        map(val => this.value + val)
+      ),
+      () => this._subject.complete()
+    );
   }
 
-  public async *mapEventToState(event: TCounterEvent) {
-    if (event === "increment") {
-      yield this.currentState + 1;
-    } else if (event === "decrement") {
-      yield this.currentState - 1;
-    }
+  private _subject = new Subject<number>();
+
+  // debounced increment
+  public increment() {
+    this._subject.next(1);
+  }
+
+  public decrement() {
+    this.next(this.value - 1);
   }
 }
 
-const counterBloc = new CounterBloc();
+const counterBloc = new CounterBloc(0);
 
 function MultiplicationComponent() {
   const count = useBlocState(counterBloc);
@@ -33,9 +44,9 @@ ReactDOM.render(
       builder={state => <p>Counter: {state}</p>}
     />
     <MultiplicationComponent />
-    <button onClick={() => counterBloc.dispatch("increment")}>Increment</button>
+    <button onClick={() => counterBloc.increment()}>Increment</button>
     <br />
-    <button onClick={() => counterBloc.dispatch("decrement")}>Decrement</button>
+    <button onClick={() => counterBloc.decrement()}>Decrement</button>
   </div>,
   document.getElementById("app")
 );
