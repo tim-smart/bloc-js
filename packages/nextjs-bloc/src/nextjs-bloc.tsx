@@ -17,7 +17,7 @@ function getStateFromBlocs<M extends { [key: string]: any }>(
   const state: { [key: string]: any } = {};
 
   Object.keys(map).forEach(key => {
-    state[key] = map[key].currentState;
+    state[key] = map[key].value;
   });
 
   return state as BlocStateMap<M>;
