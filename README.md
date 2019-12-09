@@ -11,7 +11,7 @@ conceptually very simple. It all boils down to this flow:
 Events -> Logic -> State
 ```
 
-A stream of events are transformed into a stream of states.
+Events are transformed into a stream of states.
 
 ## Basic Todo's example using React
 
