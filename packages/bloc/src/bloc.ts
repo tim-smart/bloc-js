@@ -5,8 +5,7 @@ export abstract class Bloc<S> extends BehaviorSubject<S> {
 
   // consume is a utility method for consuming other Observables and cleaning
   // them up without having to write complete() boilerplate code.
-  protected consume(o: Observable<S>, cleanup?: () => void) {
-    const s = o.subscribe(value => this.next(value));
+  protected unsubscribeOnComplete(s: Subscription, cleanup?: () => void) {
     this._cleanupHandlers.push(() => {
       s.unsubscribe();
       if (cleanup) cleanup();
