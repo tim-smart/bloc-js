@@ -9,12 +9,11 @@ class CounterBloc extends Bloc<number> {
   constructor(value: number) {
     super(value);
 
-    this.consume(
-      this._subject.pipe(
-        debounce(() => timer(1000)),
-        map(val => this.value + val)
-      ),
-      () => this._subject.complete()
+    this.unsubscribeOnComplete(
+      this._subject
+        .pipe(debounce(() => timer(1000)))
+        .subscribe(val => this.next(this.value + val)),
+      () => this._subject.complete(),
     );
   }
 
@@ -48,5 +47,5 @@ ReactDOM.render(
     <br />
     <button onClick={() => counterBloc.decrement()}>Decrement</button>
   </div>,
-  document.getElementById("app")
+  document.getElementById("app"),
 );

@@ -10,8 +10,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@bloc-js/bloc": "file:../../bloc",
-    "@bloc-js/react-bloc": "file:..",
+    "@bloc-js/bloc": "*",
+    "@bloc-js/react-bloc": "*",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "rxjs": "^6.5.3"
