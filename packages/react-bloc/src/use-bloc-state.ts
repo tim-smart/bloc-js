@@ -1,22 +1,15 @@
-import { useEffect, useState, useRef } from "react";
 import { Bloc } from "@bloc-js/bloc";
+import { useEffect, useState } from "react";
 
 export type CreateBlocFn<S> = () => Bloc<S>;
 
 export function useBlocState<S>(blocCreator: Bloc<S> | CreateBlocFn<S>) {
-  const blocRef = useRef<Bloc<S>>();
-  function getBloc() {
-    if (blocRef.current) return blocRef.current;
-    blocRef.current =
-      typeof blocCreator === "function" ? blocCreator() : blocCreator;
-    return blocRef.current;
-  }
-
-  const [state, setState] = useState<S>(getBloc().value);
+  const [state, setState] = useState<S | null>(null);
 
   useEffect(() => {
     const shouldDispose = typeof blocCreator === "function";
-    const bloc = getBloc();
+    const bloc =
+      typeof blocCreator === "function" ? blocCreator() : blocCreator;
     setState(bloc.value);
     const subscription = bloc.subscribe(nextState => {
       setState(nextState);
