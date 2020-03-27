@@ -1,16 +1,17 @@
 import { Bloc } from "@bloc-js/bloc";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export type CreateBlocFn<S> = () => Bloc<S>;
 
 export function useBlocState<S>(blocCreator: Bloc<S> | CreateBlocFn<S>) {
-  const [state, setState] = useState<S | null>(null);
+  const ref = useRef(
+    typeof blocCreator === "function" ? blocCreator() : blocCreator,
+  );
+  const [state, setState] = useState<S>(ref.current.value);
 
   useEffect(() => {
+    const bloc = ref.current;
     const shouldDispose = typeof blocCreator === "function";
-    const bloc =
-      typeof blocCreator === "function" ? blocCreator() : blocCreator;
-    setState(bloc.value);
     const subscription = bloc.subscribe(nextState => {
       setState(nextState);
     });
@@ -18,7 +19,7 @@ export function useBlocState<S>(blocCreator: Bloc<S> | CreateBlocFn<S>) {
       subscription.unsubscribe();
       if (shouldDispose) bloc.complete();
     };
-  }, []);
+  }, [ref]);
 
   return state;
 }
