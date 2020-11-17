@@ -29,9 +29,13 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "devDependencies": {
-    "rxjs": "^6.5.3"
+    "rxjs": "^6.5.3",
+    "ts-node": "^9.0.0"
   },
   "peerDependencies": {
     "rxjs": ">= 6"
+  },
+  "dependencies": {
+    "fast-deep-equal": "^3.1.3"
   }
 }

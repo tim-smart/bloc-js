@@ -1,31 +1,16 @@
-import { Bloc } from "@bloc-js/bloc";
+import { Bloc, BlocAction } from "@bloc-js/bloc";
 import { BlocBuilder, useBlocState } from "@bloc-js/react-bloc";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Subject, timer } from "rxjs";
-import { debounce, map } from "rxjs/operators";
+import { timer, Observable } from "rxjs";
+import { debounce } from "rxjs/operators";
+
+const increment: BlocAction<number> = (b, f) => f(b.value + 1);
+const decrement: BlocAction<number> = (b, f) => f(b.value - 1);
 
 class CounterBloc extends Bloc<number> {
-  constructor(value: number) {
-    super(value);
-
-    this.unsubscribeOnComplete(
-      this._subject
-        .pipe(debounce(() => timer(1000)))
-        .subscribe(val => this.next(this.value + val)),
-      () => this._subject.complete(),
-    );
-  }
-
-  private _subject = new Subject<number>();
-
-  // debounced increment
-  public increment() {
-    this._subject.next(1);
-  }
-
-  public decrement() {
-    this.next(this.value - 1);
+  transformState(input$: Observable<number>) {
+    return input$.pipe(debounce(() => timer(1000)));
   }
 }
 
@@ -43,9 +28,9 @@ ReactDOM.render(
       builder={state => <p>Counter: {state}</p>}
     />
     <MultiplicationComponent />
-    <button onClick={() => counterBloc.increment()}>Increment</button>
+    <button onClick={() => counterBloc.next(increment)}>Increment</button>
     <br />
-    <button onClick={() => counterBloc.decrement()}>Decrement</button>
+    <button onClick={() => counterBloc.next(decrement)}>Decrement</button>
   </div>,
   document.getElementById("app"),
 );

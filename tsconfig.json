@@ -2,15 +2,13 @@
   "compilerOptions": {
     "declaration": true,
     "strict": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "sourceMap": true,
     "lib": ["esnext"],
     "target": "es5",
     "module": "commonjs",
     "moduleResolution": "node",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

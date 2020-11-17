@@ -38,7 +38,8 @@
   },
   "peerDependencies": {
     "@bloc-js/bloc": ">= 2",
-    "react": "*"
+    "react": "*",
+    "rxjs": "*"
   },
   "devDependencies": {
     "@bloc-js/bloc": "file:../bloc",

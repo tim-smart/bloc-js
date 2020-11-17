@@ -9,5 +9,8 @@
   },
   "scripts": {
     "publish": "lerna run clean && lerna run tsc && lerna publish"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
