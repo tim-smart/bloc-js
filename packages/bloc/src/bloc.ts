@@ -2,14 +2,27 @@ import { BehaviorSubject, Subscription, Subject, Observable } from "rxjs";
 import * as RxOp from "rxjs/operators";
 import deepEqual from "fast-deep-equal";
 
-export type BlocAction<S> = (
+export interface BlocAction<S> {
+  action: BlocActionFn<S>;
+  resolve: () => void;
+}
+
+export type BlocActionFn<S> = (
   b: Bloc<S>,
   next: (s: S) => void,
 ) => void | Promise<void>;
 
-const observableFromAction = <S>(b: Bloc<S>) => (f: BlocAction<S>) =>
-  new Observable<S>(s => {
-    Promise.resolve(f(b, s.next.bind(s)))
+interface NextStateWithResolve<S> {
+  next: S;
+  resolve: () => void;
+}
+
+const observableFromAction = <S>(b: Bloc<S>) => ({
+  action,
+  resolve,
+}: BlocAction<S>) =>
+  new Observable<NextStateWithResolve<S>>(s => {
+    Promise.resolve(action(b, (next: S) => s.next({ next, resolve })))
       .catch(err => s.error(err))
       .finally(() => {
         s.complete();
@@ -26,9 +39,10 @@ export abstract class Bloc<S> extends Observable<S> {
     this.transformActions(this._actions$)
       .pipe(RxOp.concatMap(observableFromAction(this)))
       .subscribe(
-        nextState => {
-          if (deepEqual(this.value, nextState)) return;
-          this._state$.next(nextState);
+        ({ next, resolve }) => {
+          if (deepEqual(this.value, next)) return resolve();
+          this._state$.next(next);
+          resolve();
         },
         err => this._state$.error(err),
       );
@@ -42,9 +56,13 @@ export abstract class Bloc<S> extends Observable<S> {
     return this._state$.value;
   }
 
-  public next = (action: BlocAction<S>) => {
-    this._actions$.next(action);
-  };
+  public next = (action: BlocActionFn<S>): Promise<void> =>
+    new Promise(resolve =>
+      this._actions$.next({
+        action,
+        resolve,
+      }),
+    );
 
   protected transformActions(input$: Observable<BlocAction<S>>) {
     return input$;
