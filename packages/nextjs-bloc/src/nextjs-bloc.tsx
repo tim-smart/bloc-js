@@ -1,84 +1,54 @@
-import { Bloc } from "@bloc-js/bloc";
+/// <reference path="./next-env.d.ts" />
+
+import { BlocRegistry, BlocRoot } from "@bloc-js/react-bloc";
 import { NextComponentType, NextPageContext } from "next";
 import React from "react";
 import { AppContextType } from "next/dist/next-server/lib/utils";
 
 const isServer = typeof window === "undefined";
 
-type ExtractBlocState<B> = B extends Bloc<infer S> ? S : never;
+export function wrapper(Component: NextComponentType<any, any, any>) {
+  let registry: BlocRegistry;
 
-export type BlocStateMap<M> = { [K in keyof M]: ExtractBlocState<M[K]> };
-
-export type CreateBlocsFn<B, C> = (data: BlocStateMap<B>, ctx: C) => B;
-
-function getStateFromBlocs<M extends { [key: string]: any }>(
-  map: M
-): BlocStateMap<M> {
-  const state: { [key: string]: any } = {};
-
-  Object.keys(map).forEach(key => {
-    state[key] = map[key].value;
-  });
-
-  return state as BlocStateMap<M>;
-}
-
-export function withBlocs<M, C = any>(
-  createBlocs: CreateBlocsFn<M, C>,
-  Component: NextComponentType<any, any, any>,
-  InheritedCtx?: React.Context<Partial<C>>
-) {
-  let blocs: M;
-
-  function initializeBlocs(data: any, ctx: C) {
+  function initializeRegistry(data: any) {
     if (isServer) {
-      return createBlocs(data, ctx);
+      return new BlocRegistry(data);
     }
-    if (!blocs) {
-      blocs = createBlocs(data, ctx);
+    if (!registry) {
+      registry = new BlocRegistry(data);
     }
-    return blocs;
+    return registry;
   }
 
-  const WithBlocs: NextComponentType<
+  const WithBlocRoot: NextComponentType<
     NextPageContext | AppContextType,
     any,
     any
   > = props => {
-    let blocs: M;
-
-    if (InheritedCtx) {
-      const inheritedBlocs = React.useContext(InheritedCtx) as C;
-      blocs = initializeBlocs(props.initialBlocState, inheritedBlocs);
-    } else {
-      blocs = initializeBlocs(props.initialBlocState, {} as any);
-    }
-
-    return <Component {...props} blocs={blocs} />;
+    const registry = initializeRegistry(props.initialBlocState);
+    return (
+      <BlocRoot registry={registry}>
+        <Component {...props} />
+      </BlocRoot>
+    );
   };
 
-  WithBlocs.getInitialProps = async nextCtx => {
+  WithBlocRoot.getInitialProps = async nextCtx => {
     const ctx = (nextCtx as AppContextType).ctx || nextCtx;
-    let blocs: M;
+    const registry = new BlocRegistry({});
 
-    if (InheritedCtx) {
-      blocs = initializeBlocs({}, ctx as any);
-    } else {
-      blocs = initializeBlocs({}, {} as C);
-    }
-
-    Object.assign(ctx, blocs);
+    (ctx as any).blocRegistry = registry;
 
     let pageProps = {};
     if (typeof Component.getInitialProps === "function") {
-      pageProps = await Component.getInitialProps(nextCtx as any);
+      pageProps = await Component.getInitialProps(nextCtx);
     }
 
     return {
       ...pageProps,
-      initialBlocState: getStateFromBlocs(blocs)
+      initialBlocState: registry.getState(),
     };
   };
 
-  return WithBlocs;
+  return WithBlocRoot;
 }

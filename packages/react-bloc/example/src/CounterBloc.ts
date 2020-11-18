@@ -1,15 +1,20 @@
 import { Bloc, BlocAction } from "@bloc-js/bloc";
 import { timer, Observable } from "rxjs";
 import { debounce } from "rxjs/operators";
-import { useBloc, useBlocState } from "@bloc-js/react-bloc";
+import { useBloc, useBlocState, blocGetter } from "@bloc-js/react-bloc";
 
-export const useCounterBloc = () =>
-  useBloc<number>("counter", (v = 0) => new CounterBloc(v));
-
+// hooks
+export const getCounterBloc = blocGetter<number>(
+  "counter",
+  (v = 0) => new CounterBloc(v),
+);
+export const useCounterBloc = () => useBloc<number>(getCounterBloc);
 export const useCounterState = () => useBlocState(useCounterBloc());
 
-export const increment: BlocAction<number> = (b, f) => f(b.value + 1);
-export const decrement: BlocAction<number> = (b, f) => f(b.value - 1);
+// actions
+type Action = BlocAction<number>;
+export const increment: Action = (b, f) => f(b.value + 1);
+export const decrement: Action = (b, f) => f(b.value - 1);
 
 export class CounterBloc extends Bloc<number> {
   transformState(input$: Observable<number>) {

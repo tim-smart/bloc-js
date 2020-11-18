@@ -1,51 +1,48 @@
 import * as React from "react";
 import { Bloc } from "@bloc-js/bloc";
 
-export type BlocRegistry = {
-  blocs: { [id: string]: Bloc<any> };
-  initialState: { [id: string]: any };
-};
+export class BlocRegistry {
+  constructor(initialState: { [id: string]: any } = {}) {
+    this.initialState = initialState;
+  }
 
-export const BlocRootContext = React.createContext<BlocRegistry>({
-  blocs: {},
-  initialState: {},
-});
+  private blocs: { [id: string]: Bloc<any> } = {};
+  private initialState: { [id: string]: any };
+
+  public getState() {
+    return Object.keys(this.blocs).reduce(
+      (o, id) => ({
+        ...o,
+        [id]: this.blocs[id].value,
+      }),
+      {},
+    );
+  }
+
+  public register<S>(id: string, factory: TBlocFactory<S>) {
+    if (this.blocs[id]) {
+      return this.blocs[id] as Bloc<S>;
+    }
+    const state = this.initialState[id];
+    const bloc = factory(state);
+    this.blocs[id] = bloc;
+    return bloc;
+  }
+}
+
+export const BlocRootContext = React.createContext<BlocRegistry>(
+  new BlocRegistry({}),
+);
 
 export type TBlocFactory<S> = (is?: S) => Bloc<S>;
 
-export function registerBloc<S>(
-  r: BlocRegistry,
+export type BlocGetter<S> = (registry: BlocRegistry) => Bloc<S>;
+
+export function blocGetter<S>(
   id: string,
   factory: TBlocFactory<S>,
-) {
-  let bloc = r.blocs[id] as Bloc<S> | undefined;
-  if (!bloc) {
-    bloc = factory(r.initialState[id]);
-    r.blocs[id] = bloc;
-  }
-
-  return bloc;
-}
-
-export function createRegistry(
-  initialState: BlocRegistry["initialState"],
-): BlocRegistry {
-  return {
-    blocs: {},
-    initialState,
-  };
-}
-
-export function stateFromRegistry(
-  r: BlocRegistry,
-): BlocRegistry["initialState"] {
-  return Object.keys(r).reduce(
-    (o, id) => ({
-      ...o,
-      [id]: r.blocs[id].value,
-    }),
-    {},
-  );
+): BlocGetter<S> {
+  return registry => registry.register(id, factory);
 }
 
 export interface BlocRootProps {

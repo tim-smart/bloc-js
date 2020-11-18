@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Bloc } from "@bloc-js/bloc";
 import { useEffect, useState } from "react";
-import { BlocRootContext, TBlocFactory, registerBloc } from "./bloc-root";
+import { BlocRootContext, BlocGetter } from "./bloc-root";
 
-export function useBloc<S>(id: string, factory: TBlocFactory<S>) {
+export function useBloc<S>(fn: BlocGetter<S>) {
   const registry = React.useContext(BlocRootContext);
-  const [bloc] = React.useState(() => registerBloc(registry, id, factory));
+  const [bloc] = React.useState(() => fn(registry));
   return bloc;
 }
 
