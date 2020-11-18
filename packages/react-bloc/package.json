@@ -1,6 +1,6 @@
 {
   "name": "@bloc-js/react-bloc",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "description": "React components for implementing the BLoC pattern.",
   "keywords": [
     "react",
