@@ -1,9 +1,9 @@
-/// <reference path="./next-env.d.ts" />
+/// <reference path="../next-env.d.ts" />
 
 import { BlocRegistry, BlocRoot } from "@bloc-js/react-bloc";
-import { NextComponentType, NextPageContext } from "next";
 import React from "react";
-import { AppContextType } from "next/dist/next-server/lib/utils";
+import { AppContext } from "next/app";
+import { NextComponentType, NextPageContext } from "next";
 
 const isServer = typeof window === "undefined";
 
@@ -21,7 +21,7 @@ export function wrapper(Component: NextComponentType<any, any, any>) {
   }
 
   const WithBlocRoot: NextComponentType<
-    NextPageContext | AppContextType,
+    NextPageContext | AppContext,
     any,
     any
   > = props => {
@@ -34,7 +34,7 @@ export function wrapper(Component: NextComponentType<any, any, any>) {
   };
 
   WithBlocRoot.getInitialProps = async nextCtx => {
-    const ctx = (nextCtx as AppContextType).ctx || nextCtx;
+    const ctx = (nextCtx as AppContext).ctx || nextCtx;
     const registry = new BlocRegistry({});
 
     (ctx as any).blocRegistry = registry;
