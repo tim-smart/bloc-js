@@ -15,7 +15,8 @@
   "files": [
     "lib",
     "lib-es",
-    "lib-esnext"
+    "lib-esnext",
+    "next-env.d.ts"
   ],
   "repository": {
     "type": "git",
