@@ -1,11 +1,5 @@
 export * from "./bloc-builder";
+export { BlocRootProps, BlocRoot } from "./bloc-root";
 export * from "./hooks";
+export * from "./registry";
 export * from "./with-blocs";
-export {
-  BlocRegistry,
-  TBlocFactory,
-  BlocGetter,
-  blocGetter,
-  BlocRootProps,
-  BlocRoot,
-} from "./bloc-root";
