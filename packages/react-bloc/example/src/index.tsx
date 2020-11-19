@@ -2,33 +2,27 @@ import { Bloc, BlocAction } from "@bloc-js/bloc";
 import { BlocBuilder, useBlocState } from "@bloc-js/react-bloc";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {
-  useCounterState,
-  useCounterBloc,
-  increment,
-  decrement,
-} from "./CounterBloc";
+import * as C from "./CounterBloc";
 import { App } from "./App";
 
 const Counter: React.FC = () => {
-  const count = useCounterState();
+  const count = C.useState();
   return <p>Counter: {count}</p>;
 };
 
 const Buttons: React.FC = () => {
-  const bloc = useCounterBloc();
-
+  const bloc = C.useBloc();
   return (
     <>
-      <button onClick={() => bloc.next(increment)}>Increment</button>
+      <button onClick={() => bloc.next(C.increment)}>Increment</button>
       <br />
-      <button onClick={() => bloc.next(decrement)}>Decrement</button>
+      <button onClick={() => bloc.next(C.decrement)}>Decrement</button>
     </>
   );
 };
 
 function MultiplicationComponent() {
-  const count = useCounterState();
+  const count = C.useState();
   return <p>Multiplied: {count * 3}</p>;
 }
 
