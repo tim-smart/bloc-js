@@ -20,5 +20,8 @@
     "@types/react": "^16.9.15",
     "@types/react-dom": "^16.9.4",
     "parcel": "^2.0.0-beta.1"
+  },
+  "resolutions": {
+    "node-forge": "0.10.0"
   }
 }
