@@ -6,7 +6,7 @@ import { BlocGetter, blocGetter, TBlocFactory } from "./registry";
 
 export function useBloc<S>(fn: BlocGetter<S>) {
   const registry = React.useContext(BlocRootContext);
-  const [bloc] = React.useState(() => fn(registry));
+  const bloc = React.useMemo(() => fn(registry), [registry]);
   return bloc;
 }
 
@@ -20,7 +20,7 @@ export function useBlocState<S>(bloc: Bloc<S>) {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [bloc]);
 
   return state;
 }
