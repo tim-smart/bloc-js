@@ -2,8 +2,8 @@ import { BehaviorSubject, Subscription, Subject, Observable } from "rxjs";
 import * as RxOp from "rxjs/operators";
 import deepEqual from "fast-deep-equal";
 
-export interface BlocActionWrap<S> {
-  action: BlocAction<S>;
+export interface BlocActionWrap<S, B extends Bloc<S>> {
+  action: BlocAction<S, B>;
   resolve: () => void;
 }
 
@@ -17,10 +17,10 @@ interface NextStateWithResolve<S> {
   resolve: () => void;
 }
 
-const observableFromAction = <S>(b: Bloc<S>) => ({
+const observableFromAction = <S, B extends Bloc<S>>(b: B) => ({
   action,
   resolve,
-}: BlocActionWrap<S>) =>
+}: BlocActionWrap<S, B>) =>
   new Observable<NextStateWithResolve<S>>(s => {
     Promise.resolve(action(b, (next: S) => s.next({ next, resolve })))
       .catch(err => s.error(err))
@@ -37,7 +37,7 @@ export abstract class Bloc<S> extends Observable<S> {
     this.source = this.transformState(this._state$);
 
     this.transformActions(this._actions$)
-      .pipe(RxOp.concatMap(observableFromAction(this)))
+      .pipe(RxOp.concatMap(observableFromAction<S, this>(this)))
       .subscribe(
         ({ next, resolve }) => {
           if (deepEqual(this.value, next)) return resolve();
@@ -48,7 +48,7 @@ export abstract class Bloc<S> extends Observable<S> {
       );
   }
 
-  protected _actions$ = new Subject<BlocActionWrap<S>>();
+  protected _actions$ = new Subject<BlocActionWrap<S, this>>();
   protected _state$: BehaviorSubject<S>;
   protected _cleanupHandlers: (() => void)[] = [];
 
@@ -56,7 +56,7 @@ export abstract class Bloc<S> extends Observable<S> {
     return this._state$.value;
   }
 
-  public next = (action: BlocAction<S>): Promise<void> =>
+  public next = (action: BlocAction<S, this>): Promise<void> =>
     new Promise(resolve =>
       this._actions$.next({
         action,
@@ -64,7 +64,7 @@ export abstract class Bloc<S> extends Observable<S> {
       }),
     );
 
-  protected transformActions(input$: Observable<BlocActionWrap<S>>) {
+  protected transformActions(input$: Observable<BlocActionWrap<S, this>>) {
     return input$;
   }
 
