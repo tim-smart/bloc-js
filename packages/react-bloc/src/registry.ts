@@ -23,13 +23,13 @@ export class BlocRegistry {
       return this.blocs[id] as Bloc<S>;
     }
     const state = this.initialState[id];
-    const bloc = factory(state);
+    const bloc = factory(this, state);
     this.blocs[id] = bloc;
     return bloc;
   }
 }
 
-export type TBlocFactory<S> = (is?: S) => Bloc<S>;
+export type TBlocFactory<S> = (r: BlocRegistry, is?: S) => Bloc<S>;
 export type BlocGetter<S> = (registry: BlocRegistry) => Bloc<S>;
 export function blocGetter<S>(
   id: string,
