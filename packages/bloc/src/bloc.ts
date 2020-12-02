@@ -7,8 +7,8 @@ export interface BlocActionWrap<S> {
   resolve: () => void;
 }
 
-export type BlocAction<S> = (
-  b: Bloc<S>,
+export type BlocAction<S, B extends Bloc<S> = Bloc<S>> = (
+  b: B,
   next: (s: S) => void,
 ) => void | Promise<void>;
 
