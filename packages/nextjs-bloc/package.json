@@ -1,6 +1,6 @@
 {
   "name": "@bloc-js/nextjs-bloc",
-  "version": "3.2.5",
+  "version": "3.2.6",
   "description": "A small helper library for using bloc-js with Next.js",
   "author": "Tim Smart <tim.smart@arisechurch.com>",
   "homepage": "https://github.com/tim-smart/bloc-js#readme",
