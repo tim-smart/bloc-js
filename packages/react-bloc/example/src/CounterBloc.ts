@@ -8,7 +8,7 @@ type State = number;
 // hooks
 export const { useBloc, useState, getBloc } = createHooks<State>(
   "counter",
-  (s = 0) => new CounterBloc(s),
+  (_, s = 0) => new CounterBloc(s),
 );
 
 // actions
