@@ -6,10 +6,13 @@ export const BlocRootContext = React.createContext<BlocRegistry>(
 );
 
 export interface BlocRootProps {
-  registry: BlocRegistry;
+  registry?: BlocRegistry;
 }
 
-export const BlocRoot: React.FC<BlocRootProps> = ({ children, registry }) => (
+export const BlocRoot: React.FC<BlocRootProps> = ({
+  children,
+  registry = new BlocRegistry({}),
+}) => (
   <BlocRootContext.Provider value={registry}>
     {children}
   </BlocRootContext.Provider>
