@@ -1,6 +1,5 @@
-import { BehaviorSubject, Subscription, Subject, Observable } from "rxjs";
+import { BehaviorSubject, Observable, Subject, Subscription } from "rxjs";
 import * as RxOp from "rxjs/operators";
-import deepEqual from "fast-deep-equal";
 
 export interface BlocActionWrap<S> {
   action: BlocAction<S>;
@@ -21,9 +20,9 @@ const observableFromAction = <S>(b: Bloc<S>) => ({
   action,
   resolve,
 }: BlocActionWrap<S>) =>
-  new Observable<NextStateWithResolve<S>>(s => {
+  new Observable<NextStateWithResolve<S>>((s) => {
     Promise.resolve(action(b, (next: S) => s.next({ next, resolve })))
-      .catch(err => s.error(err))
+      .catch((err) => s.error(err))
       .finally(() => {
         s.complete();
       });
@@ -40,11 +39,11 @@ export abstract class Bloc<S> extends Observable<S> {
       .pipe(RxOp.concatMap(observableFromAction(this)))
       .subscribe(
         ({ next, resolve }) => {
-          if (deepEqual(this.value, next)) return resolve();
+          if (this.value === next) return resolve();
           this._state$.next(next);
           resolve();
         },
-        err => this._state$.error(err),
+        (err) => this._state$.error(err),
       );
   }
 
@@ -57,7 +56,7 @@ export abstract class Bloc<S> extends Observable<S> {
   }
 
   public next = (action: BlocAction<S>): Promise<void> =>
-    new Promise(resolve =>
+    new Promise((resolve) =>
       this._actions$.next({
         action,
         resolve,
@@ -82,7 +81,7 @@ export abstract class Bloc<S> extends Observable<S> {
   }
 
   public complete() {
-    this._cleanupHandlers.forEach(fn => fn());
+    this._cleanupHandlers.forEach((fn) => fn());
     this._actions$.complete();
   }
 }
