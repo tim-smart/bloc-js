@@ -1,5 +1,6 @@
 import { BehaviorSubject, Observable, Subject, Subscription } from "rxjs";
 import * as RxOp from "rxjs/operators";
+import deepEqual from "fast-deep-equal";
 
 export interface BlocActionWrap<S> {
   action: BlocAction<S>;
@@ -29,7 +30,7 @@ const observableFromAction = <S>(b: Bloc<S>) => ({
   });
 
 export abstract class Bloc<S> extends Observable<S> {
-  constructor(initialState: S) {
+  constructor(initialState: S, isEqual = (a: S, b: S) => deepEqual(a, b)) {
     super();
 
     this._state$ = new BehaviorSubject(initialState);
@@ -39,7 +40,7 @@ export abstract class Bloc<S> extends Observable<S> {
       .pipe(RxOp.concatMap(observableFromAction(this)))
       .subscribe(
         ({ next, resolve }) => {
-          if (this.value === next) return resolve();
+          if (isEqual(this.value, next)) return resolve();
           this._state$.next(next);
           resolve();
         },
